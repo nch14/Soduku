@@ -1,13 +1,11 @@
+//*begin*//
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -17,6 +15,10 @@ import blockProcess.*;
 
 
 public class Sukudo implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4848187383172573547L;
 	BlockPO[][] blocks;
 	ArrayList<LineForMatrix> lines=new ArrayList<LineForMatrix>() ;
 	public static void main(String[] args) throws IOException {
@@ -52,7 +54,7 @@ public class Sukudo implements Serializable {
 			
 			System.out.println("请继续输入设定的数独初始化数据，以如下形式：0 0 1（行，列，数值，并用空格隔开），如果您已初始化完毕，请敲入“end表示结束");
 		}*/
-		File file=new File("1");
+		File file=new File("2");
 		BufferedReader b=new BufferedReader(new FileReader(file));
 		String data = b.readLine();//一次读入一行，直到读入null为文件结束   
 		while(data!=null){   
@@ -71,8 +73,22 @@ public class Sukudo implements Serializable {
 		
 		//初始化棋盘所有块
 		initializationBlocks();
+		/*
+		*/
+		
 		//初始化棋盘的布尔矩阵
 		initializationMatrix();
+		/*for(int i=0;i<lines.size();i++){
+			LineForMatrix a=lines.get(i);
+			ArrayList<Integer> line=a.line;
+			System.out.print(a.lineNum+"  ");
+			for(int j=0;j<line.size();j++){
+				System.out.print(line.get(j));
+			}
+			System.out.println();
+		}*/
+		
+		
 		//执行Alogorithm X算法
 		AlogorithmX(lines);
 		
@@ -160,56 +176,25 @@ public class Sukudo implements Serializable {
 	public void AlogorithmX(ArrayList<LineForMatrix> linesThis) {
 		if(step1(linesThis)==0){
 			//无解
-			System.out.println("?");
-			System.out.println("年轻人，你不可能算出来的，别问我为什么，我比你帅");
+			//System.out.println("失败了一条路");
 		}else{
 			step2(linesThis);
 		}
 		
 	}
 	//Succ表示用来表示它处于递归中调用，和原方法有参数上的差异
-	public void AlogorithmXSucc(ArrayList<LineForMatrix> linesThis,ArrayList<LineForMatrix> answer) {
+	public void AlogorithmXSucc(ArrayList<LineForMatrix> linesThis,ArrayList<Integer> answer) {
 		if(step1(linesThis)==0){
 			//无解
-			System.out.println("年轻人，你不可能算出来的，别问我为什么，我比你帅");
+			//System.out.println("失败了一条路");
 		}else{
 			step2Succ(linesThis,answer);
 		}
 	}
 	
-	/*public int getLeastColumn(){
-		//初始化一个数组放数据
-		int[] numberOfEachColumn=new int[324];
-		for(int i=0;i<323;i++){
-			numberOfEachColumn[i]=0;
-		}
-		//整理数据
-		for(int i=0;i<lines.size();i++){
-			LineForMatrix aLine=lines.get(i);
-			for(int j=0;j<323;j++){
-				int value=aLine.line.get(j);
-				if(value==1){
-					numberOfEachColumn[j]+=1;
-				}
-			}
-		}
-		//冒泡排序
-		int[] temp=numberOfEachColumn;//这名字太长了，打着累
-		int minColumn=0;
-		for(int i=0;i<323;i++){
-			if(temp[i]<temp[i+1]){
-				int a=temp[i];
-				temp[i]=temp[i+1];
-				temp[i+1]=a;
-			}else{
-				minColumn=i+1;
-			}
-		}
-		return minColumn;
-	}*/
-	
 	public int step1(ArrayList<LineForMatrix> linesThis){
 		//初始化一个数组放数据
+		System.out.println(linesThis.get(0).line.size());
 				int length=linesThis.get(0).line.size();
 				int[] numberOfEachColumn=new int[length];
 				for(int i=0;i<length;i++){
@@ -261,21 +246,22 @@ public class Sukudo implements Serializable {
 				}
 				//满足有最小1的列c
 				int leastSize=step1(linesThis);
+			//	System.out.println("leastSize"+leastSize);
 				ArrayList<Integer> columnNum=new ArrayList<Integer>();//它用来放列的标号
-				for(int i=0;i<linesThis.size();i++){
+				for(int i=0;i<length;i++){
 					if(numberOfEachColumn[i]==leastSize){
 						columnNum.add(i);
+						//System.out.println("添加进去的列号："+i);
 					}
 				}
 				//开始第三个步骤
 				for(int i=0;i<columnNum.size();i++){
 					ArrayList<LineForMatrix> forNext=copy(linesThis);
 					step3(columnNum.get(i),forNext);
-					//System.out.println(columnNum.get(i));
 				}
 	}
 
-	public void step2Succ(ArrayList<LineForMatrix> linesThis,ArrayList<LineForMatrix> answer){
+	public void step2Succ(ArrayList<LineForMatrix> linesThis,ArrayList<Integer> answer){
 		//初始化一个数组放数据
 		int length=linesThis.get(0).line.size();
 		int[] numberOfEachColumn=new int[length];
@@ -294,16 +280,20 @@ public class Sukudo implements Serializable {
 		}
 		//满足有最小1的列c
 		int leastSize=step1(linesThis);
+	//	System.out.println("leastSize"+leastSize);
 		ArrayList<Integer> columnNum=new ArrayList<Integer>();//它用来放列的标号
-		for(int i=0;i<linesThis.size();i++){
+		
+		for(int i=0;i<length;i++){
 			if(numberOfEachColumn[i]==leastSize){
 				columnNum.add(i);
+				//System.out.println("columnNum.add(i)"+i);
 			}
 		}
 		//开始第三个步骤
 		for(int i=0;i<columnNum.size();i++){
 			ArrayList<LineForMatrix> forNext=copy(linesThis);
-			step3Succ(columnNum.get(i),forNext,answer);
+			ArrayList<Integer> answerForNext=copy2(answer);
+			step3Succ(columnNum.get(i),forNext,answerForNext);
 		}
 }
 	
@@ -317,23 +307,22 @@ public class Sukudo implements Serializable {
 				linesContainThis.add(i);
 			}
 		}		
+		//System.out.println("column"+column);
 		//System.out.println("linesContainThis.size()"+linesContainThis.size());
 		for(int i=0;i<linesContainThis.size();i++){
 			int lineNum=linesContainThis.get(i);
-			ArrayList<LineForMatrix> answer=new ArrayList<LineForMatrix>();//标记答案的array
+			ArrayList<Integer> answer=new ArrayList<Integer>();//标记答案的array
 			LineForMatrix aLine=linesThis.get(lineNum);
-			answer.add(aLine);
-			ArrayList<LineForMatrix> answerForNext=copy(answer);
+			answer.add(aLine.lineNum);
+			//System.out.println("lineNum"+lineNum);
+			ArrayList<Integer> answerForNext=copy2(answer);
 			ArrayList<LineForMatrix> forNext=copy(linesThis);
 			step4(lineNum,forNext,answerForNext);
 		}
 	}
 
-	public void step3Succ(Integer column,ArrayList<LineForMatrix> linesThis,ArrayList<LineForMatrix> answer) {
-		//初始化一个数组，把矩阵中列C有1的行都放进去
-		
-		System.out.println("you bei zhi xing");
-		
+	public void step3Succ(Integer column,ArrayList<LineForMatrix> linesThis,ArrayList<Integer> answer) {
+		//初始化一个数组，把矩阵中列C有1的行都放进来 		
 		ArrayList<Integer> linesContainThis=new ArrayList<Integer>();
 		for(int i=0;i<linesThis.size();i++){
 			LineForMatrix aLine=linesThis.get(i);
@@ -341,43 +330,41 @@ public class Sukudo implements Serializable {
 				linesContainThis.add(i);
 			}
 		}
-		
+	//	System.out.println("column"+column);
+	//	System.out.println("linesContainThis"+linesContainThis.get(0));
+	
 		for(int i=0;i<linesContainThis.size();i++){
 			int lineNum=linesContainThis.get(i);
 			LineForMatrix aLine=linesThis.get(lineNum);
-			answer.add(aLine);
-			ArrayList<LineForMatrix> answerForNext=copy(answer);
+			//System.out.println("aLine.lineNum"+aLine.lineNum);
+			answer.add(aLine.lineNum);
+			ArrayList<Integer> answerForNext=copy2(answer);
 			ArrayList<LineForMatrix> forNext=copy(linesThis);
 			step4(lineNum,forNext,answerForNext);
 		}
-		
-		
 	}
 	
 	public void step4(int lineNum, ArrayList<LineForMatrix> linesThis,
-			ArrayList<LineForMatrix> answer) {
+			ArrayList<Integer> answer) {
 		
-		System.out.println(linesThis.size());
+		//System.out.println("计量开始"+linesThis.size());
 		LineForMatrix aLine=linesThis.get(lineNum);
-		
-		ArrayList<Integer> goingToDelate=new ArrayList<Integer>();
-		
+		//System.out.println("linenum"+aLine.lineNum);
 		for(int i=0;i<linesThis.size();i++){
 			LineForMatrix tempLine=linesThis.get(i);
-			if(aLine.equals(tempLine)){
-				//什么都不做
-			}else{
 				for(int j=0;j<aLine.line.size();j++){
-					if(tempLine.line.get(j)==aLine.line.get(j)){
+					if((tempLine.line.get(j)==1)&&(aLine.line.get(j)==1)){
 						linesThis.remove(i);
 						i=i-1;
+						//System.out.print("1");
 						break;
+						
 					}	
-				}
-			}		
+				}	
 		}
-		System.out.println(linesThis.size());
-		//消去行r中所有的值为1的列
+		linesThis.add(aLine);
+				//消去行r中所有的值为1的列
+		//System.out.println(linesThis.size());
 		ArrayList<Integer> numberOfColumn=new ArrayList<Integer>();
 		for(int i=0;i<aLine.line.size();i++){
 			if(aLine.line.get(i)==1){
@@ -388,16 +375,21 @@ public class Sukudo implements Serializable {
 			LineForMatrix lineTemp=linesThis.get(i);
 			
 			for(int j=0;j<numberOfColumn.size();j++){
-				lineTemp.line.remove(numberOfColumn.get(j));
+				lineTemp.line.remove(numberOfColumn.get(j)-j);
 			}
 		}
-		//System.out.println(linesThis.size());
+		System.out.println("aLine.line.size()"+aLine.line.size());
+		System.out.println("linesThis.size()"+linesThis.size());
 		int index=linesThis.indexOf(aLine);
 		linesThis.remove(index);
-		if(linesThis.size()==0){
+		if(linesThis.size()==0||aLine.line.size()==0){
 			System.out.println("YOU GET IT!");
+			getKey(answer);
+
 		}else{
+			//System.out.println("answer"+answer.get(0));
 			AlogorithmXSucc(linesThis,answer);
+			//System.out.println("YOU lose once!");
 		}
 	}
 	
@@ -427,9 +419,71 @@ public class Sukudo implements Serializable {
 				e.printStackTrace();
 				System.out.println("发生异常");
 				 return ori;
-			}
-
-	         
-	        
+			}       
 		}
+	
+	public ArrayList<Integer> copy2(ArrayList<Integer> ori) {
+        FileOutputStream fileStream;
+		try {
+			/* fileStream = new FileOutputStream("MyMatrix.ser");
+	         ObjectOutputStream out = new ObjectOutputStream(fileStream);
+	         out.writeObject(ori);
+	         out.close();
+	         
+	         FileInputStream byteIn = new FileInputStream("MyMatrix.ser");
+	         ObjectInputStream in =new ObjectInputStream(byteIn);
+	         ArrayList<LineForMatrix> dest = ( ArrayList<LineForMatrix>)in.readObject();
+	         in.close();*/
+			
+			 ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+	         ObjectOutputStream out = new ObjectOutputStream(byteOut);
+	         out.writeObject(ori);
+	    
+	         ByteArrayInputStream byteIn = new ByteArrayInputStream(byteOut.toByteArray());
+	         ObjectInputStream in =new ObjectInputStream(byteIn);
+	         ArrayList<Integer> dest = (  ArrayList<Integer>)in.readObject();
+	         return dest;
+		} catch (Exception e) {
+			// TODO 自动生成的 catch 块
+			e.printStackTrace();
+			System.out.println("发生异常");
+			 return ori;
+		}       
+	}
+	public void getKey(ArrayList<Integer> answer){
+		int[][] result=new int[9][9];
+		for(int i=0;i<answer.size();i++){
+			LineForMatrix tempLine=lines.get(answer.get(i));
+			int limit1=0;
+			int limit2=0;
+			int limit3=0;
+			for(int j=0;j<81;j++){
+				if(tempLine.line.get(j)==1){
+					limit1=j;
+				}
+			}
+			for(int j=81;j<162;j++){
+				if(tempLine.line.get(j)==1){
+					limit2=j;
+				}
+			}
+			for(int j=162;j<243;j++){
+				if(tempLine.line.get(j)==1){
+					limit3=j;
+				}
+			}
+			int x=(81+limit1+limit2-limit3)/10;
+			int y=limit1-9*x;
+			int z=(limit2-x-81)/9+1;
+			result[x][y]=z;
+			
+		}
+		for(int i=0;i<9;i++){
+			for(int j=0;j<9;j++){
+				System.out.print(result[i][j]);
+			}
+			System.out.println();
+		}
+	}	
 }
+//*end*//
