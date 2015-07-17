@@ -135,8 +135,17 @@ public class Sukudo {
 		}
 		
 	}
+	//Succ表示用来表示它处于递归中调用，和原方法有参数上的差异
+	public void AlogorithmXSucc(ArrayList<LineForMatrix> linesThis,ArrayList<LineForMatrix> answer) {
+		if(step1(linesThis)==0){
+			//无解
+			System.out.println("年轻人，你不可能算出来的，别问我为什么，我比你帅");
+		}else{
+			step2Succ(linesThis,answer);
+		}
+	}
 	
-	public int getLeastColumn(){
+	/*public int getLeastColumn(){
 		//初始化一个数组放数据
 		int[] numberOfEachColumn=new int[324];
 		for(int i=0;i<323;i++){
@@ -165,12 +174,13 @@ public class Sukudo {
 			}
 		}
 		return minColumn;
-	}
+	}*/
 	
 	public int step1(ArrayList<LineForMatrix> linesThis){
 		//初始化一个数组放数据
-				int[] numberOfEachColumn=new int[324];
-				for(int i=0;i<323;i++){
+				int length=linesThis.get(0).line.size();
+				int[] numberOfEachColumn=new int[length];
+				for(int i=0;i<length-1;i++){
 					numberOfEachColumn[i]=0;
 				}
 				//整理数据
@@ -185,7 +195,7 @@ public class Sukudo {
 				}
 				//冒泡排序
 				int[] temp=numberOfEachColumn;//这名字太长了，打着累
-				for(int i=0;i<323;i++){
+				for(int i=0;i<length-1;i++){
 					if(temp[i]<temp[i+1]){
 						int a=temp[i];
 						temp[i]=temp[i+1];
@@ -194,19 +204,20 @@ public class Sukudo {
 						
 					}
 				}
-				return temp[323];
+				return temp[length-1];
 	}
 	
 	public void step2(ArrayList<LineForMatrix> linesThis){
 				//初始化一个数组放数据
-				int[] numberOfEachColumn=new int[324];
-				for(int i=0;i<323;i++){
+				int length=linesThis.get(0).line.size();
+				int[] numberOfEachColumn=new int[length];
+				for(int i=0;i<length-1;i++){
 					numberOfEachColumn[i]=0;
 				}
 				//整理数据
 				for(int i=0;i<linesThis.size();i++){
 					LineForMatrix aLine=linesThis.get(i);
-					for(int j=0;j<323;j++){
+					for(int j=0;j<length-1;j++){
 						int value=aLine.line.get(j);
 						if(value==1){
 							numberOfEachColumn[j]+=1;
@@ -227,6 +238,37 @@ public class Sukudo {
 				}
 	}
 
+	public void step2Succ(ArrayList<LineForMatrix> linesThis,ArrayList<LineForMatrix> answer){
+		//初始化一个数组放数据
+		int length=linesThis.get(0).line.size();
+		int[] numberOfEachColumn=new int[length];
+		for(int i=0;i<length-1;i++){
+			numberOfEachColumn[i]=0;
+		}
+		//整理数据
+		for(int i=0;i<linesThis.size();i++){
+			LineForMatrix aLine=linesThis.get(i);
+			for(int j=0;j<length-1;j++){
+				int value=aLine.line.get(j);
+				if(value==1){
+					numberOfEachColumn[j]+=1;
+				}
+			}
+		}
+		//满足有最小1的列c
+		int leastSize=step1(linesThis);
+		ArrayList<Integer> columnNum=new ArrayList<Integer>();//它用来放列的标号
+		for(int i=0;i<linesThis.size();i++){
+			if(numberOfEachColumn[i]==leastSize){
+				columnNum.add(i);
+			}
+		}
+		//开始第三个步骤
+		for(int i=0;i<columnNum.size();i++){
+			step3Succ(columnNum.get(i),linesThis,answer);
+		}
+}
+	
 	public void step3(Integer column,ArrayList<LineForMatrix> linesThis) {
 		//初始化一个数组，把矩阵中列C有1的行都放进去
 		ArrayList<Integer> linesContainThis=new ArrayList<Integer>();
@@ -248,6 +290,26 @@ public class Sukudo {
 		
 	}
 
+	public void step3Succ(Integer column,ArrayList<LineForMatrix> linesThis,ArrayList<LineForMatrix> answer) {
+		//初始化一个数组，把矩阵中列C有1的行都放进去
+		ArrayList<Integer> linesContainThis=new ArrayList<Integer>();
+		for(int i=0;i<linesThis.size();i++){
+			LineForMatrix aLine=linesThis.get(i);
+			if(aLine.line.get(column)==1){
+				linesContainThis.add(i);
+			}
+		}
+		
+		for(int i=0;i<linesContainThis.size();i++){
+			int lineNum=linesContainThis.get(i);
+			LineForMatrix aLine=linesThis.get(lineNum);
+			answer.add(aLine);
+			step4(lineNum,linesThis,answer);
+		}
+		
+		
+	}
+	
 	public void step4(int lineNum, ArrayList<LineForMatrix> linesThis,
 			ArrayList<LineForMatrix> answer) {
 		
@@ -283,8 +345,11 @@ public class Sukudo {
 		}
 		
 		linesThis.remove(lineNum);
-		
-		AlogorithmX(linesThis);
+		if(linesThis.size()==0){
+			System.out.println("YOU GET IT!");
+		}else{
+			AlogorithmXSucc(linesThis,answer);
+		}
 	}
 	
 	
