@@ -109,7 +109,7 @@ public class Sukudo {
 					int indexOfLimit1=i*9+j;
 					int indexOfLimit2=(value-1)*9+i+81;
 					int indexOfLimit3=(value-1)*9+j+162;
-					int indexOfLimit4=(i-x)*3+(j-y);
+					int indexOfLimit4=(i-x)*3+(j-y)+243;
 					
 					aLine.line.set(indexOfLimit1, 1);
 					aLine.line.set(indexOfLimit2, 1);
