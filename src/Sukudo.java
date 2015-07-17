@@ -42,10 +42,13 @@ public class Sukudo {
 		initializationBlocks();
 		//初始化棋盘的布尔矩阵
 		initializationMatrix();
-		
+		//执行Alogorithm X算法
+		AlogorithmX(lines);
 		
 	}
 	
+
+
 	public void initializationBlocks(){
 		for(int i=0;i<9;i++){
 			for(int j=0;j<9;j++){
@@ -118,16 +121,138 @@ public class Sukudo {
 					
 					lines.add(aLine);
 					aLine.lineNum=lines.indexOf(aLine);	
-				}
-				
-				
-				
-				
-				
-			
-				
+				}	
 			}
 		}
 	}
+	
+	public void AlogorithmX(ArrayList<LineForMatrix> linesThis) {
+		if(step1(linesThis)==0){
+			//无解
+			System.out.println("年轻人，你不可能算出来的，别问我为什么，我比你帅");
+		}else{
+			step2(linesThis);
+		}
+		
+	}
+	
+	public int getLeastColumn(){
+		//初始化一个数组放数据
+		int[] numberOfEachColumn=new int[324];
+		for(int i=0;i<324;i++){
+			numberOfEachColumn[i]=0;
+		}
+		//整理数据
+		for(int i=0;i<lines.size();i++){
+			LineForMatrix aLine=lines.get(i);
+			for(int j=0;j<324;j++){
+				int value=aLine.line.get(j);
+				if(value==1){
+					numberOfEachColumn[j]+=1;
+				}
+			}
+		}
+		//冒泡排序
+		int[] temp=numberOfEachColumn;//这名字太长了，打着累
+		int minColumn=0;
+		for(int i=0;i<323;i++){
+			if(temp[i]<temp[i+1]){
+				int a=temp[i];
+				temp[i]=temp[i+1];
+				temp[i+1]=a;
+			}else{
+				minColumn=i+1;
+			}
+		}
+		return minColumn;
+	}
+	
+	public int step1(ArrayList<LineForMatrix> linesThis){
+		//初始化一个数组放数据
+				int[] numberOfEachColumn=new int[324];
+				for(int i=0;i<324;i++){
+					numberOfEachColumn[i]=0;
+				}
+				//整理数据
+				for(int i=0;i<linesThis.size();i++){
+					LineForMatrix aLine=linesThis.get(i);
+					for(int j=0;j<324;j++){
+						int value=aLine.line.get(j);
+						if(value==1){
+							numberOfEachColumn[j]+=1;
+						}
+					}
+				}
+				//冒泡排序
+				int[] temp=numberOfEachColumn;//这名字太长了，打着累
+				for(int i=0;i<323;i++){
+					if(temp[i]<temp[i+1]){
+						int a=temp[i];
+						temp[i]=temp[i+1];
+						temp[i+1]=a;
+					}else{
+						
+					}
+				}
+				return temp[323];
+	}
+	
+	public void step2(ArrayList<LineForMatrix> linesThis){
+				//初始化一个数组放数据
+				int[] numberOfEachColumn=new int[324];
+				for(int i=0;i<324;i++){
+					numberOfEachColumn[i]=0;
+				}
+				//整理数据
+				for(int i=0;i<linesThis.size();i++){
+					LineForMatrix aLine=linesThis.get(i);
+					for(int j=0;j<324;j++){
+						int value=aLine.line.get(j);
+						if(value==1){
+							numberOfEachColumn[j]+=1;
+						}
+					}
+				}
+				//满足有最小1的列c
+				int leastSize=step1(linesThis);
+				ArrayList<Integer> columnNum=new ArrayList<Integer>();//它用来放列的标号
+				for(int i=0;i<linesThis.size();i++){
+					if(numberOfEachColumn[i]==leastSize){
+						columnNum.add(i);
+					}
+				}
+				//开始第三个步骤
+				for(int i=0;i<columnNum.size();i++){
+					step3(columnNum.get(i),linesThis);
+				}
+	}
+
+	public void step3(Integer column,ArrayList<LineForMatrix> linesThis) {
+		//初始化一个数组，把矩阵中列C有1的行都放进去
+		ArrayList<Integer> linesContainThis=new ArrayList<Integer>();
+		for(int i=0;i<linesThis.size();i++){
+			LineForMatrix aLine=linesThis.get(i);
+			if(aLine.line.get(column)==1){
+				linesContainThis.add(i);
+			}
+		}
+		
+		for(int i=0;i<linesContainThis.size();i++){
+			int lineNum=linesContainThis.get(i);
+			ArrayList<LineForMatrix> answer=new ArrayList<LineForMatrix>();//标记答案的array
+			LineForMatrix aLine=linesThis.get(lineNum);
+			answer.add(aLine);
+			step4(lineNum,linesThis,answer);
+		}
+		
+		
+	}
+
+	public void step4(int lineNum, ArrayList<LineForMatrix> linesThis,
+			ArrayList<LineForMatrix> answer) {
+		
+		
+	}
+	
 	
 }
