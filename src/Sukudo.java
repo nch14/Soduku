@@ -1,13 +1,14 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
-import blockProcess.BlockPO;
+import blockProcess.*;
 
 
 public class Sukudo {
 	BlockPO[][] blocks;
-	
+	ArrayList<LineForMatrix> lines;
 	public static void main(String[] args) throws IOException {
 		// TODO 自动生成的方法存根
 		Sukudo sudo=new Sukudo();
@@ -37,12 +38,15 @@ public class Sukudo {
 			System.out.println("请继续输入设定的数独初始化数据，以如下形式：0 0 1（行，列，数值，并用空格隔开），如果您已初始化完毕，请敲入“end”表示结束");
 		}
 		
-		//初始化矩阵
+		//初始化棋盘所有块
+		initializationBlocks();
+		//初始化棋盘的布尔矩阵
 		initializationMatrix();
+		
 		
 	}
 	
-	public void initializationMatrix(){
+	public void initializationBlocks(){
 		for(int i=0;i<9;i++){
 			for(int j=0;j<9;j++){
 				if(!(blocks[i][j].isSet)){
@@ -75,15 +79,55 @@ public class Sukudo {
 						}
 						y+=1;
 						x-=3;
-					}
-					
-					
+					}					
 				}
 			}
 		}
-		
-		
-		
-		
+	}//方法结束
+	
+	public void initializationMatrix(){
+		/*
+		 * 布尔矩阵每一行有324列
+		 * 第一个81列用于限制1：即每个空格必须写入一个数字
+		 * 第二个81列用于限制2：即每列必须包含所有数字
+		 * 第三个81列用于限制3：即每行必须包含所有数字
+		 * 第四个81列用于限制4：即每个矩形格子里有所有数字
+		 */
+		for(int i=0;i<9;i++){
+			for(int j=0;j<9;j++){
+				BlockPO block=blocks[i][j];
+				
+				//x，y表示这个方格所在的九宫格的左上方格坐标
+				int x=((i+1)/3)*3;
+				int y=((j+1)/3)*3;
+				
+				//对每个格子每一种的可能生成矩阵的一行
+				for(int k=0;k<block.value.size();k++){
+					int value=block.value.get(k);
+					
+					LineForMatrix aLine=new LineForMatrix();
+					int indexOfLimit1=i*9+j;
+					int indexOfLimit2=(value-1)*9+i+81;
+					int indexOfLimit3=(value-1)*9+j+162;
+					int indexOfLimit4=(i-x)*3+(j-y);
+					
+					aLine.line.set(indexOfLimit1, 1);
+					aLine.line.set(indexOfLimit2, 1);
+					aLine.line.set(indexOfLimit3, 1);
+					aLine.line.set(indexOfLimit4, 1);
+					
+					lines.add(aLine);
+					aLine.lineNum=lines.indexOf(aLine);	
+				}
+				
+				
+				
+				
+				
+			
+				
+			}
+		}
 	}
+	
 }
