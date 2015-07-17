@@ -7,6 +7,7 @@ import blockProcess.BlockPO;
 
 public class Sukudo {
 	BlockPO[][] blocks;
+	
 	public static void main(String[] args) throws IOException {
 		// TODO 自动生成的方法存根
 		Sukudo sudo=new Sukudo();
@@ -26,8 +27,8 @@ public class Sukudo {
 				break;
 			}
 			String datas[]=lines.split(" ");
-			int x=Integer.parseInt(datas[0]);
-			int y=Integer.parseInt(datas[1]);
+			int x=Integer.parseInt(datas[0])-1;//实际的数组从0位开始，用户视角从1开始
+			int y=Integer.parseInt(datas[1])-1;//实际的数组从0位开始，用户视角从1开始
 			int value=Integer.parseInt(datas[2]);
 			
 			blocks[x][y].isSet=true;
@@ -37,6 +38,51 @@ public class Sukudo {
 		}
 		
 		//初始化矩阵
+		initializationMatrix();
+		
+	}
+	
+	public void initializationMatrix(){
+		for(int i=0;i<9;i++){
+			for(int j=0;j<9;j++){
+				if(!(blocks[i][j].isSet)){
+					
+					//初始化每一个块的值，默认有9种可能
+					for(int k=1;k<10;k++){
+						blocks[i][j].value.add(k);
+					}
+					//这一行有多少个元素被确定
+					for(int l=0;l<9;l++){
+						if(blocks[i][l].isSet){
+							blocks[i][j].value.remove(blocks[i][l].value.get(0));
+						}
+					}
+					//这一列有多少个元素被确定
+					for(int l=0;l<9;l++){
+						if(blocks[l][j].isSet){
+							blocks[i][j].value.remove(blocks[l][j].value.get(0));
+						}
+					}
+					//所在九宫格内有多少个元素被确定
+					int x=((i+1)/3)*3;
+					int y=((j+1)/3)*3;
+					for(int m=0;m<3;m++){
+						for(int n=0;n<3;n++){
+							if(blocks[x][y].isSet){
+								blocks[i][j].value.remove(blocks[x][y].value.get(0));
+							}
+							x+=1;
+						}
+						y+=1;
+						x-=3;
+					}
+					
+					
+				}
+			}
+		}
+		
+		
 		
 		
 	}
