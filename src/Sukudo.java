@@ -139,13 +139,13 @@ public class Sukudo {
 	public int getLeastColumn(){
 		//初始化一个数组放数据
 		int[] numberOfEachColumn=new int[324];
-		for(int i=0;i<324;i++){
+		for(int i=0;i<323;i++){
 			numberOfEachColumn[i]=0;
 		}
 		//整理数据
 		for(int i=0;i<lines.size();i++){
 			LineForMatrix aLine=lines.get(i);
-			for(int j=0;j<324;j++){
+			for(int j=0;j<323;j++){
 				int value=aLine.line.get(j);
 				if(value==1){
 					numberOfEachColumn[j]+=1;
@@ -170,13 +170,13 @@ public class Sukudo {
 	public int step1(ArrayList<LineForMatrix> linesThis){
 		//初始化一个数组放数据
 				int[] numberOfEachColumn=new int[324];
-				for(int i=0;i<324;i++){
+				for(int i=0;i<323;i++){
 					numberOfEachColumn[i]=0;
 				}
 				//整理数据
 				for(int i=0;i<linesThis.size();i++){
 					LineForMatrix aLine=linesThis.get(i);
-					for(int j=0;j<324;j++){
+					for(int j=0;j<aLine.line.size();j++){
 						int value=aLine.line.get(j);
 						if(value==1){
 							numberOfEachColumn[j]+=1;
@@ -200,13 +200,13 @@ public class Sukudo {
 	public void step2(ArrayList<LineForMatrix> linesThis){
 				//初始化一个数组放数据
 				int[] numberOfEachColumn=new int[324];
-				for(int i=0;i<324;i++){
+				for(int i=0;i<323;i++){
 					numberOfEachColumn[i]=0;
 				}
 				//整理数据
 				for(int i=0;i<linesThis.size();i++){
 					LineForMatrix aLine=linesThis.get(i);
-					for(int j=0;j<324;j++){
+					for(int j=0;j<323;j++){
 						int value=aLine.line.get(j);
 						if(value==1){
 							numberOfEachColumn[j]+=1;
@@ -251,7 +251,40 @@ public class Sukudo {
 	public void step4(int lineNum, ArrayList<LineForMatrix> linesThis,
 			ArrayList<LineForMatrix> answer) {
 		
+		LineForMatrix aLine=linesThis.get(lineNum);
 		
+		for(int i=0;i<linesThis.size();i++){
+			LineForMatrix tempLine=linesThis.get(i);
+			if(i==lineNum){
+				//什么都不做
+			}else{
+				for(int j=0;j<aLine.line.size();j++){
+					if(tempLine.line.get(j)==aLine.line.get(j)){
+						linesThis.remove(i);
+						i=i-1;
+						break;
+					}	
+				}
+			}		
+		}
+		//消去行r中所有的值为1的列
+		ArrayList<Integer> numberOfColumn=new ArrayList<Integer>();
+		for(int i=0;i<aLine.line.size();i++){
+			if(aLine.line.get(i)==1){
+				numberOfColumn.add(i);
+			}
+		}
+		for(int i=0;i<linesThis.size();i++){
+			LineForMatrix lineTemp=linesThis.get(i);
+			
+			for(int j=0;j<numberOfColumn.size();j++){
+				lineTemp.line.remove(numberOfColumn.get(j));
+			}
+		}
+		
+		linesThis.remove(lineNum);
+		
+		AlogorithmX(linesThis);
 	}
 	
 	
