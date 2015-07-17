@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -8,7 +9,7 @@ import blockProcess.*;
 
 public class Sukudo {
 	BlockPO[][] blocks;
-	ArrayList<LineForMatrix> lines;
+	ArrayList<LineForMatrix> lines=new ArrayList<LineForMatrix>() ;
 	public static void main(String[] args) throws IOException {
 		// TODO 自动生成的方法存根
 		Sukudo sudo=new Sukudo();
@@ -17,6 +18,11 @@ public class Sukudo {
 	
 	public void startGame() throws IOException{
 		blocks=new BlockPO[9][9];
+		for(int i=0;i<9;i++){
+			for(int j=0;j<9;j++){
+				blocks[i][j]=new BlockPO();
+			}
+		}
 		
 		//等待用户输入
 		System.out.println("请输入设定的数独初始化数据，以如下形式：0 0 1（行，列，数值，并用空格隔开）");
@@ -71,8 +77,8 @@ public class Sukudo {
 						}
 					}
 					//所在九宫格内有多少个元素被确定
-					int x=((i+1)/3)*3;
-					int y=((j+1)/3)*3;
+					int x=((i)/3)*3;
+					int y=((j)/3)*3;
 					for(int m=0;m<3;m++){
 						for(int n=0;n<3;n++){
 							if(blocks[x][y].isSet){
