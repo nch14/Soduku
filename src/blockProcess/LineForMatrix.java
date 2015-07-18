@@ -1,8 +1,9 @@
 package blockProcess;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class LineForMatrix {
+public class LineForMatrix implements Serializable {
 	public int lineNum=0;
 	public ArrayList<Integer> line=new ArrayList<Integer>();
 	
